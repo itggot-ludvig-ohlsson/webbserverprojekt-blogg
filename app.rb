@@ -9,6 +9,41 @@ get('/') do
     slim(:index)
 end
 
+get('/register') do
+    slim(:register)
+end
+
+post('/register') do
+    db = SQLite3::Database.new('db/blog.db')
+
+    pass = BCrypt::Password.create(params["pass"])
+    db.execute("INSERT INTO users (username, password) VALUES (?,?)", params["username"], pass)
+
+    redirect('/login')
+end
+
+get('/login') do
+    slim(:login, locals: {fail: params[:fail]})
+end
+
+post('/login') do
+    db = SQLite3::Database.new('db/blog.db')
+    db.results_as_hash = true
+    credentials = db.execute("SELECT hashed_pass FROM users WHERE name=?", params["name"])
+
+    if credentials.length > 0 && BCrypt::Password.new(credentials[0]["hashed_pass"]) == params["pass"]
+        session[:logged_in] = true
+        redirect('/')
+    else
+        redirect('/login?fail=true')
+    end
+end
+
+post('/logout') do
+    session.clear
+    redirect('/')
+end
+
 =begin
 get('*') do
     if request.path_info == "/login" || request.path_info == "/register" || session[:logged_in]
@@ -24,45 +59,6 @@ post('*') do
     else
         "ACCESS DENIED"
     end
-end
-
-get('/') do
-    slim(:index)
-end
-
-get('/login') do
-    slim(:login, locals: {fail: params[:fail]})
-end
-
-get('/register') do
-    slim(:register)
-end
-
-post('/login') do
-    db = SQLite3::Database.new('db/users.db')
-    db.results_as_hash = true
-    credentials = db.execute("SELECT password FROM users WHERE name=?", params["name"])
-
-    if credentials.length > 0 && BCrypt::Password.new(credentials[0]["password"]) == params["pass"]
-        session[:logged_in] = true
-        redirect('/')
-    else
-        redirect('/login?fail=true')
-    end
-end
-
-post('/register') do
-    db = SQLite3::Database.new('db/users.db')
-
-    pass = BCrypt::Password.create(params["pass"])
-    db.execute("INSERT INTO users (name, email, tel, department_id, password) VALUES (?,'a@b.c','1-23',0,?)", params["name"], pass)
-
-    redirect('/login')
-end
-
-post('/logout') do
-    session.clear
-    redirect('/')
 end
 
 get('/users') do
