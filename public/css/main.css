@@ -8,9 +8,25 @@
 .title {
     grid-area: title;
 }
+
+.title a h1 {
+    font-weight: normal;
+}
+
+.title a h1:hover {
+    font-weight: bold;
+}
   
 .nav {
     grid-area: nav;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav a:hover {
+    font-weight: bold;
 }
   
 .side {

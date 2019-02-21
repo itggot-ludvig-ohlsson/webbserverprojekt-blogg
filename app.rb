@@ -17,7 +17,7 @@ post('/register') do
     db = SQLite3::Database.new('db/blog.db')
 
     pass = BCrypt::Password.create(params["pass"])
-    db.execute("INSERT INTO users (username, password) VALUES (?,?)", params["username"], pass)
+    db.execute("INSERT INTO users (username, hashed_pass) VALUES (?,?)", params["username"], pass)
 
     redirect('/login')
 end
@@ -29,7 +29,7 @@ end
 post('/login') do
     db = SQLite3::Database.new('db/blog.db')
     db.results_as_hash = true
-    credentials = db.execute("SELECT hashed_pass FROM users WHERE name=?", params["name"])
+    credentials = db.execute("SELECT hashed_pass FROM users WHERE name=?", params["username"])
 
     if credentials.length > 0 && BCrypt::Password.new(credentials[0]["hashed_pass"]) == params["pass"]
         session[:logged_in] = true
@@ -42,6 +42,28 @@ end
 post('/logout') do
     session.clear
     redirect('/')
+end
+
+get('/user/:id') do
+    db = SQLite3::Database.new('db/blog.db')
+    db.results_as_hash = true
+
+    user = db.execute("SELECT * FROM users WHERE id=?", params["id"])
+
+    slim(:profile, locals: {user: user[0]})
+end
+
+get('/user/:id/edit') do
+    if session[:user] == params["id"]
+        db = SQLite3::Database.new('db/blog.db')
+        db.results_as_hash = true
+
+        user = db.execute("SELECT * FROM users WHERE id=?", params["id"])[0]
+
+        slim(:edit_profile, locals: {name: user["username"]})
+    else
+        redirect("/user/#{params["id"]}")
+    end
 end
 
 =begin
