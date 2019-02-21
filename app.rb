@@ -29,7 +29,7 @@ end
 post('/login') do
     db = SQLite3::Database.new('db/blog.db')
     db.results_as_hash = true
-    credentials = db.execute("SELECT hashed_pass FROM users WHERE name=?", params["username"])
+    credentials = db.execute("SELECT hashed_pass FROM users WHERE username=?", params["username"])
 
     if credentials.length > 0 && BCrypt::Password.new(credentials[0]["hashed_pass"]) == params["pass"]
         session[:logged_in] = true
@@ -64,6 +64,10 @@ get('/user/:id/edit') do
     else
         redirect("/user/#{params["id"]}")
     end
+end
+
+get('/user/:id/posts') do
+    # WIP
 end
 
 =begin
