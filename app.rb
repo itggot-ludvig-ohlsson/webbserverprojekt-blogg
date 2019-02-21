@@ -49,8 +49,8 @@ get('/user/:id') do
     db.results_as_hash = true
 
     user = db.execute("SELECT * FROM users WHERE id=?", params["id"])
-
-    slim(:profile, locals: {user: user[0]})
+    
+    slim(:profile, locals: {user: user[0]["username"]})
 end
 
 get('/user/:id/edit') do
