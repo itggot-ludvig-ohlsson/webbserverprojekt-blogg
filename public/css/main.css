@@ -1,4 +1,22 @@
-nav ul {
-    display: flex;
-    flex: 1;
+.grid-container {
+    display: grid;
+    grid-template-columns: 0.8fr 1.5fr 0.7fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-areas: "title nav ." ". content side" ". content side";
+}
+  
+.title {
+    grid-area: title;
+}
+  
+.nav {
+    grid-area: nav;
+}
+  
+.side {
+    grid-area: side;
+}
+  
+.content {
+    grid-area: content;
 }

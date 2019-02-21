@@ -8,18 +8,13 @@ html lang="en"
         link href="/css/main.css" type="text/css" rel="stylesheet"
         link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"
     body
-        nav
-            ul
-                li
-                    header
-                        a href="/"
-                            h1 Blog
-                li
-                    a href="register" Register
-                li
-                    a href="login" Login
-                li
-                    a href="#" Logout
-        main
-            .wrapper
+        .grid-container
+            .title
+                a href="/"
+                    h1 Blog
+            .nav
+                h3 Register | Login | Logout
+            .side
+                h3 WIP
+            .content
                 == yield
