@@ -16,8 +16,9 @@ html lang="en"
                 pre
                     a href="register" Register 
                     a href="login" | Login | 
-                    a href="logout" Logout
+                    form method="POST" action="logout" id="logout-form"
+                        input type="Submit" value="Logout"
             .side
-                h1 WIP
+                h1 Sidebar
             .content
                 == yield

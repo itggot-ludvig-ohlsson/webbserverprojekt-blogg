@@ -19,14 +19,31 @@
   
 .nav {
     grid-area: nav;
-    font-size: 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 1.5rem;
 }
 
-.nav a:hover {
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.nav pre *:hover {
     font-weight: bold;
+    cursor: pointer;
+}
+
+#logout-form {
+    display: inline;
+}
+
+#logout-form input {
+    border: none;
+    background-color: transparent;
+    font-family: monospace;
+    font-size: 1em;
 }
   
 .side {
