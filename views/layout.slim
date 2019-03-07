@@ -20,5 +20,8 @@ html lang="en"
                         input type="Submit" value="Logout"
             .side
                 h1 Sidebar
+                - users.each do |user|
+                    a href="/user/#{user["id"]}" #{user["username"]}
+                    br
             .content
                 == yield

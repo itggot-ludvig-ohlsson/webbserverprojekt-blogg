@@ -6,11 +6,21 @@ require 'bcrypt'
 enable :sessions
 
 get('/') do
-    slim(:index)
+    db = SQLite3::Database.new('db/blog.db')
+    db.results_as_hash = true
+
+    users = db.execute("SELECT * FROM users")
+
+    slim(:index, locals: {users: users})
 end
 
 get('/register') do
-    slim(:register)
+    db = SQLite3::Database.new('db/blog.db')
+    db.results_as_hash = true
+
+    users = db.execute("SELECT * FROM users")
+
+    slim(:register, locals: {users: users})
 end
 
 post('/register') do
@@ -23,7 +33,12 @@ post('/register') do
 end
 
 get('/login') do
-    slim(:login, locals: {fail: params[:fail]})
+    db = SQLite3::Database.new('db/blog.db')
+    db.results_as_hash = true
+
+    users = db.execute("SELECT * FROM users")
+
+    slim(:login, locals: {users: users, fail: params[:fail]})
 end
 
 post('/login') do
@@ -49,8 +64,9 @@ get('/user/:id') do
     db.results_as_hash = true
 
     user = db.execute("SELECT * FROM users WHERE id=?", params["id"])[0]
+    users = db.execute("SELECT * FROM users")
     
-    slim(:profile, locals: {user: user["username"], id: session[:user], content: user["about_me"]})
+    slim(:profile, locals: {users: users, user: user["username"], id: session[:user], profile_id: params["id"], content: user["about_me"]})
 end
 
 get('/user/:id/edit') do
@@ -59,8 +75,9 @@ get('/user/:id/edit') do
         db.results_as_hash = true
 
         user = db.execute("SELECT * FROM users WHERE id=?", params["id"])[0]
+        users = db.execute("SELECT * FROM users")
         
-        slim(:edit_profile, locals: {user: user["username"], content: user["about_me"]})
+        slim(:edit_profile, locals: {users: users, user: user["username"], content: user["about_me"]})
     else
         redirect("/user/#{params["id"]}")
     end

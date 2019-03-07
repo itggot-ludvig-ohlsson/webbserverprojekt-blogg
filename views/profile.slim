@@ -1,6 +1,6 @@
 h1 #{user}
 textarea (readonly) #{content}
 
-- if id
+- if id == profile_id.to_i
     button
         a href="#{id}/edit" Edit

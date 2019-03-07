@@ -62,3 +62,11 @@ textarea {
 #save-form {
     height: 100%;
 }
+
+.side a {
+    color: blue;
+}
+
+.side a:hover {
+    font-weight: bold;
+}
