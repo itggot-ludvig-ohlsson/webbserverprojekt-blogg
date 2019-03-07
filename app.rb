@@ -29,10 +29,10 @@ end
 post('/login') do
     db = SQLite3::Database.new('db/blog.db')
     db.results_as_hash = true
-    credentials = db.execute("SELECT hashed_pass FROM users WHERE username=?", params["username"])
+    credentials = db.execute("SELECT id, hashed_pass FROM users WHERE username=?", params["username"])[0]
 
-    if credentials.length > 0 && BCrypt::Password.new(credentials[0]["hashed_pass"]) == params["pass"]
-        session[:logged_in] = true
+    if credentials != nil && BCrypt::Password.new(credentials["hashed_pass"]) == params["pass"]
+        session[:user] = credentials["id"]
         redirect('/')
     else
         redirect('/login?fail=true')
@@ -48,22 +48,33 @@ get('/user/:id') do
     db = SQLite3::Database.new('db/blog.db')
     db.results_as_hash = true
 
-    user = db.execute("SELECT * FROM users WHERE id=?", params["id"])
+    user = db.execute("SELECT * FROM users WHERE id=?", params["id"])[0]
     
-    slim(:profile, locals: {user: user[0]["username"]})
+    slim(:profile, locals: {user: user["username"], id: session[:user], content: user["about_me"]})
 end
 
 get('/user/:id/edit') do
-    if session[:user] == params["id"]
+    if session[:user] == params["id"].to_i
         db = SQLite3::Database.new('db/blog.db')
         db.results_as_hash = true
 
         user = db.execute("SELECT * FROM users WHERE id=?", params["id"])[0]
-
-        slim(:edit_profile, locals: {name: user["username"]})
+        
+        slim(:edit_profile, locals: {user: user["username"], content: user["about_me"]})
     else
         redirect("/user/#{params["id"]}")
     end
+end
+
+post('/user/:id/edit') do
+    if session[:user] == params["id"].to_i
+        db = SQLite3::Database.new('db/blog.db')
+        db.results_as_hash = true
+        
+        db.execute("UPDATE users SET about_me=? WHERE id=?", params["content"], params["id"])
+    end
+    
+    redirect("/user/#{params["id"]}")
 end
 
 get('/user/:id/posts') do
@@ -137,15 +148,5 @@ get('/users/:id/update') do
     user = db.execute("SELECT * FROM users WHERE id=?", params["id"])[0]
 
     slim(:update_user, locals: {name: user["name"], email: user["email"], tel: user["tel"], department: user["department_id"] - 1})
-end
-
-post('/users/:id/update') do
-    db = SQLite3::Database.new('db/users.db')
-    db.results_as_hash = true
-    
-    departments = db.execute("SELECT * FROM departments")
-    db.execute("UPDATE users SET name=?, email=?, tel=?, department_id=? WHERE id=?", params["name"], params["email"], params["tel"], (departments.find do |i| i["title"] == params["department"] end)["id"], params["id"])
-
-    redirect("/users/#{params["id"]}")
 end
 =end

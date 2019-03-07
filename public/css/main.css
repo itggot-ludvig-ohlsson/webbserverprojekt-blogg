@@ -53,3 +53,12 @@ a {
 .content {
     grid-area: content;
 }
+
+textarea {
+    width: 90%;
+    height: 100%;
+}
+
+#save-form {
+    height: 100%;
+}
