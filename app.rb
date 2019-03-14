@@ -120,10 +120,22 @@ post('/user/:id/post') do
         db = SQLite3::Database.new('db/blog.db')
         db.results_as_hash = true
         
-        db.execute("INSERT INTO posts VALUES (?,?,?)", params["id"], params["title"], params["content"])
+        db.execute("INSERT INTO posts (writer, title, content) VALUES (?,?,?)", params["id"], params["title"], params["content"])
     end
     
     redirect("/user/#{params["id"]}")
+end
+
+post('/post/:postid/delete') do
+    db = SQLite3::Database.new('db/blog.db')
+
+    id = db.execute("SELECT writer FROM posts WHERE id=?", params["postid"])[0][0]
+
+    if session[:user] == id.to_i
+        db.execute("DELETE FROM posts WHERE id=?", params["postid"])
+    end
+    
+    redirect back
 end
 
 =begin
