@@ -65,8 +65,16 @@ get('/user/:id') do
 
     user = db.execute("SELECT * FROM users WHERE id=?", params["id"])[0]
     users = db.execute("SELECT * FROM users")
+    posts = db.execute("SELECT * FROM posts WHERE writer=?", params["id"][0])
     
-    slim(:profile, locals: {users: users, user: user["username"], id: session[:user], profile_id: params["id"], content: user["about_me"]})
+    slim(:profile, locals: {
+        users: users,
+        user: user["username"],
+        id: session[:user],
+        profile_id: params["id"],
+        content: user["about_me"],
+        posts: posts
+    })
 end
 
 get('/user/:id/edit') do
@@ -94,9 +102,37 @@ post('/user/:id/edit') do
     redirect("/user/#{params["id"]}")
 end
 
-get('/user/:id/posts') do
-    # WIP
+get('/user/:id/post') do
+    if session[:user] == params["id"].to_i
+        db = SQLite3::Database.new('db/blog.db')
+        db.results_as_hash = true
+
+        users = db.execute("SELECT * FROM users")
+
+        slim(:create_post, locals: {users: users})
+    else
+        redirect("/user/#{params["id"]}")
+    end
 end
+
+post('/user/:id/post') do
+    if session[:user] == params["id"].to_i
+        db = SQLite3::Database.new('db/blog.db')
+        db.results_as_hash = true
+        
+        db.execute("INSERT INTO posts VALUES (?,?,?)", params["id"], params["title"], params["content"])
+    end
+    
+    redirect("/user/#{params["id"]}")
+end
+
+=begin
+- posts.reverse_each do |post|
+    h3 #{post["title"]}
+    h4 by #{writers[post["writer"]]}
+    p #{post["content"]}
+    br
+=end
 
 =begin
 get('*') do

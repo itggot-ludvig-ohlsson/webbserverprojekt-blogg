@@ -59,7 +59,7 @@ textarea {
     height: 100%;
 }
 
-#save-form {
+#save-form, #post-form {
     height: 100%;
 }
 

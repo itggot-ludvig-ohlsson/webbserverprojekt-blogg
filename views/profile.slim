@@ -7,3 +7,12 @@ textarea (readonly) #{content}
         a href="#{id}/edit" Edit
 
 h2 My posts
+- if id == profile_id.to_i
+    button
+        a href="#{id}/post" Create Post
+- posts.reverse_each do |post|
+    h3 #{post["title"]}
+    p #{post["content"]}
+    button
+        a href="#{id}/post/#{post["id"]}/delete" Delete post
+    br
