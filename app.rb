@@ -138,6 +138,32 @@ post('/post/:postid/delete') do
     redirect back
 end
 
+get('/post/:postid/edit') do
+    db = SQLite3::Database.new('db/blog.db')
+    db.results_as_hash = true
+
+    users = db.execute("SELECT * FROM users")
+    post = db.execute("SELECT writer, title, content FROM posts WHERE id=?", params["postid"])[0]
+
+    if session[:user] == post["writer"].to_i
+        slim(:edit_post, locals: {users: users, post: post})
+    else
+        redirect back
+    end
+end
+
+post('/post/:postid/edit') do
+    db = SQLite3::Database.new('db/blog.db')
+
+    id = db.execute("SELECT writer FROM posts WHERE id=?", params["postid"])[0][0]
+
+    if session[:user] == id.to_i
+        db.execute("UPDATE posts SET title=?, content=? WHERE id=?", params["title"], params["content"], params["postid"])
+    end
+    
+    redirect("/user/#{id}")
+end
+
 =begin
 - posts.reverse_each do |post|
     h3 #{post["title"]}
