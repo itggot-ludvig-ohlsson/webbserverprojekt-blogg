@@ -56,7 +56,7 @@ a {
 
 textarea {
     width: 90%;
-    height: 100%;
+    height: 25vh;
 }
 
 #save-form, #post-form {
@@ -71,10 +71,6 @@ textarea {
     font-weight: bold;
 }
 
-.post {
-    height: 25%;
-}
-
 #title {
-    
+    height: 5vh;
 }
