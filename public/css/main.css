@@ -1,7 +1,7 @@
 .grid-container {
     display: grid;
-    grid-template-columns: 0.8fr 1.5fr 0.7fr;
-    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-columns: 0.75fr 1.5fr 0.75fr;
+    grid-template-rows: 0.25fr 1fr 1fr;
     grid-template-areas: "title nav ." ". content side" ". content side";
 }
   

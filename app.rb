@@ -10,8 +10,9 @@ get('/') do
     db.results_as_hash = true
 
     users = db.execute("SELECT * FROM users")
+    posts = db.execute("SELECT * FROM posts")
 
-    slim(:index, locals: {users: users})
+    slim(:index, locals: {users: users, posts: posts})
 end
 
 get('/register') do
@@ -163,81 +164,3 @@ post('/post/:postid/edit') do
     
     redirect("/user/#{id}")
 end
-
-=begin
-- posts.reverse_each do |post|
-    h3 #{post["title"]}
-    h4 by #{writers[post["writer"]]}
-    p #{post["content"]}
-    br
-=end
-
-=begin
-get('*') do
-    if request.path_info == "/login" || request.path_info == "/register" || session[:logged_in]
-        pass
-    else
-        redirect('/login')
-    end
-end
-
-post('*') do
-    if request.path_info == "/login" || request.path_info == "/register" || request.path_info == "/logout" || session[:logged_in]
-        pass
-    else
-        "ACCESS DENIED"
-    end
-end
-
-get('/users') do
-    db = SQLite3::Database.new('db/users.db')
-    db.results_as_hash = true
-
-    users = db.execute("SELECT * FROM users")
-
-    db.results_as_hash = false
-    departments = db.execute("SELECT title FROM departments")
-    
-    slim(:users, locals: {users: users, positions: departments})
-end
-
-get('/users/new') do
-    slim(:create_user)
-end
-
-post('/users') do
-    db = SQLite3::Database.new('db/users.db')
-    db.results_as_hash = true
-
-    departments = db.execute("SELECT * FROM departments")
-    db.execute("INSERT INTO users (name, email, tel, department_id) VALUES (?,?,?,?)", params["name"], params["email"], params["tel"], (departments.find do |i| i["title"] == params["department"] end)["id"])
-    
-    redirect('/users')
-end
-
-post('/users/:id/delete') do
-    db = SQLite3::Database.new('db/users.db')
-    db.execute("DELETE FROM users WHERE id=?", params["id"])
-
-    redirect('/users')
-end
-
-get('/users/:id') do
-    db = SQLite3::Database.new('db/users.db')
-    db.results_as_hash = true
-
-    departments = db.execute("SELECT * FROM departments")
-    user = db.execute("SELECT * FROM users WHERE id=?", params["id"])
-
-    slim(:show_user, locals: {user: user[0], positions: departments})
-end
-
-get('/users/:id/update') do
-    db = SQLite3::Database.new('db/users.db')
-    db.results_as_hash = true
-
-    user = db.execute("SELECT * FROM users WHERE id=?", params["id"])[0]
-
-    slim(:update_user, locals: {name: user["name"], email: user["email"], tel: user["tel"], department: user["department_id"] - 1})
-end
-=end
